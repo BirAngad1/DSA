@@ -30,8 +30,8 @@ class Simple{
 		}
 		else
 		{
-			front++;
-			a[++rear]=x;
+			rear++;
+			a[rear]=x;
 		 }
 		}
 	
