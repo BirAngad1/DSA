@@ -3,8 +3,7 @@ using namespace std;
 
 class D {
 public:
-    int v;
-    D *pr, *nx;
+    int v; D *pr, *nx;
     D(int x) : v(x), pr(NULL), nx(NULL) {}
 };
 
@@ -20,6 +19,15 @@ void fix(D *h) {
     }
 }
 
+void show(D *h){ while(h){ cout<<h->v<<" "; h=h->nx; } cout<<"\n"; }
+
 int main() {
+    D *a = new D(1);
+    D *b = new D(2);
+    D *c = new D(3);
+    a->nx = b; b->pr = a; b->nx = c; c->pr = b;
+    c->pr = NULL;
+    fix(a);
+    show(a);
     return 0;
 }
