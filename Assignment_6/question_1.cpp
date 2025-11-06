@@ -1,23 +1,26 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-struct D {
+class DNode {
+public:
     int v;
-    D *pr, *nx;
-    D(int x) : v(x), pr(NULL), nx(NULL) {}
+    DNode *pr, *nx;
+    DNode(int x) : v(x), pr(NULL), nx(NULL) {}
 };
 
-struct C {
+class CNode {
+public:
     int v;
-    C *nx;
-    C(int x) : v(x), nx(NULL) {}
+    CNode *nx;
+    CNode(int x) : v(x), nx(NULL) {}
 };
 
-struct DLL {
-    D *h = NULL;
+class DLL {
+public:
+    DNode *h = NULL;
 
     void insBeg(int x) {
-        D *n = new D(x);
+        DNode *n = new DNode(x);
         if (!h) { h = n; return; }
         n->nx = h;
         h->pr = n;
@@ -25,19 +28,19 @@ struct DLL {
     }
 
     void insEnd(int x) {
-        D *n = new D(x);
+        DNode *n = new DNode(x);
         if (!h) { h = n; return; }
-        D *t = h;
+        DNode *t = h;
         while (t->nx) t = t->nx;
         t->nx = n;
         n->pr = t;
     }
 
     void insAfter(int k, int x) {
-        D *t = h;
+        DNode *t = h;
         while (t && t->v != k) t = t->nx;
         if (!t) return;
-        D *n = new D(x);
+        DNode *n = new DNode(x);
         n->nx = t->nx;
         n->pr = t;
         if (t->nx) t->nx->pr = n;
@@ -45,10 +48,10 @@ struct DLL {
     }
 
     void insBefore(int k, int x) {
-        D *t = h;
+        DNode *t = h;
         while (t && t->v != k) t = t->nx;
         if (!t) return;
-        D *n = new D(x);
+        DNode *n = new DNode(x);
         n->nx = t;
         n->pr = t->pr;
         if (t->pr) t->pr->nx = n;
@@ -57,7 +60,7 @@ struct DLL {
     }
 
     void delVal(int k) {
-        D *t = h;
+        DNode *t = h;
         while (t && t->v != k) t = t->nx;
         if (!t) return;
         if (t->pr) t->pr->nx = t->nx;
@@ -68,7 +71,7 @@ struct DLL {
 
     int find(int k) {
         int p = 1;
-        D *t = h;
+        DNode *t = h;
         while (t) {
             if (t->v == k) return p;
             t = t->nx;
@@ -78,20 +81,21 @@ struct DLL {
     }
 
     void show() {
-        D *t = h;
+        DNode *t = h;
         if (!t) { cout << "empty\n"; return; }
         while (t) { cout << t->v << " "; t = t->nx; }
         cout << "\n";
     }
 };
 
-struct CLL {
-    C *h = NULL;
+class CLL {
+public:
+    CNode *h = NULL;
 
     void insBeg(int x) {
-        C *n = new C(x);
+        CNode *n = new CNode(x);
         if (!h) { h = n; n->nx = n; return; }
-        C *t = h;
+        CNode *t = h;
         while (t->nx != h) t = t->nx;
         n->nx = h;
         t->nx = n;
@@ -99,9 +103,9 @@ struct CLL {
     }
 
     void insEnd(int x) {
-        C *n = new C(x);
+        CNode *n = new CNode(x);
         if (!h) { h = n; n->nx = n; return; }
-        C *t = h;
+        CNode *t = h;
         while (t->nx != h) t = t->nx;
         t->nx = n;
         n->nx = h;
@@ -109,10 +113,10 @@ struct CLL {
 
     void insAfter(int k, int x) {
         if (!h) return;
-        C *t = h;
+        CNode *t = h;
         do {
             if (t->v == k) {
-                C *n = new C(x);
+                CNode *n = new CNode(x);
                 n->nx = t->nx;
                 t->nx = n;
                 return;
@@ -124,10 +128,10 @@ struct CLL {
     void insBefore(int k, int x) {
         if (!h) return;
         if (h->v == k) { insBeg(x); return; }
-        C *t = h;
+        CNode *t = h;
         do {
             if (t->nx->v == k) {
-                C *n = new C(x);
+                CNode *n = new CNode(x);
                 n->nx = t->nx;
                 t->nx = n;
                 return;
@@ -138,12 +142,12 @@ struct CLL {
 
     void delVal(int k) {
         if (!h) return;
-        C *t = h, *p = NULL;
+        CNode *t = h, *p = NULL;
         do {
             if (t->v == k) {
                 if (p == NULL) {
                     if (h->nx == h) { delete h; h = NULL; return; }
-                    C *tail = h;
+                    CNode *tail = h;
                     while (tail->nx != h) tail = tail->nx;
                     h = h->nx;
                     tail->nx = h;
@@ -164,7 +168,7 @@ struct CLL {
     int find(int k) {
         if (!h) return -1;
         int p = 1;
-        C *t = h;
+        CNode *t = h;
         do {
             if (t->v == k) return p;
             t = t->nx;
@@ -175,7 +179,7 @@ struct CLL {
 
     void show() {
         if (!h) { cout << "empty\n"; return; }
-        C *t = h;
+        CNode *t = h;
         do {
             cout << t->v << " ";
             t = t->nx;
@@ -203,3 +207,4 @@ int main() {
     }
     return 0;
 }
+
