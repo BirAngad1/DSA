@@ -1,25 +1,12 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-struct PQueue
+class PriorityQueue
 {
+private:
     int* a;
     int size;
     int cap;
-    bool isMax; 
-
-    PQueue(int capacity, bool maxHeap)
-    {
-        cap = capacity;
-        a = new int[cap];
-        size = 0;
-        isMax = maxHeap;
-    }
-
-    ~PQueue()
-    {
-        delete[] a;
-    }
 
     void ensureCapacity()
     {
@@ -41,29 +28,18 @@ struct PQueue
         cap = newCap;
     }
 
-    bool compare(int x, int y)
-    {
-        if (isMax)
-        {
-            return x > y;
-        }
-        else
-        {
-            return x < y;
-        }
-    }
-
     void siftUp(int idx)
     {
         while (idx > 0)
         {
             int parent = (idx - 1) / 2;
 
-            if (compare(a[idx], a[parent]))
+            if (a[idx] > a[parent])
             {
-                int tmp = a[idx];
+                int temp = a[idx];
                 a[idx] = a[parent];
-                a[parent] = tmp;
+                a[parent] = temp;
+
                 idx = parent;
             }
             else
@@ -79,24 +55,25 @@ struct PQueue
         {
             int left = 2 * idx + 1;
             int right = 2 * idx + 2;
-            int best = idx;
+            int largest = idx;
 
-            if (left < size && compare(a[left], a[best]))
+            if (left < size && a[left] > a[largest])
             {
-                best = left;
+                largest = left;
             }
 
-            if (right < size && compare(a[right], a[best]))
+            if (right < size && a[right] > a[largest])
             {
-                best = right;
+                largest = right;
             }
 
-            if (best != idx)
+            if (largest != idx)
             {
-                int tmp = a[idx];
-                a[idx] = a[best];
-                a[best] = tmp;
-                idx = best;
+                int temp = a[idx];
+                a[idx] = a[largest];
+                a[largest] = temp;
+
+                idx = largest;
             }
             else
             {
@@ -105,15 +82,35 @@ struct PQueue
         }
     }
 
+public:
+    PriorityQueue(int capacity)
+    {
+        cap = capacity;
+        a = new int[cap];
+        size = 0;
+    }
+
+    ~PriorityQueue()
+    {
+        delete[] a;
+    }
+
+    bool isEmpty()
+    {
+        return size == 0;
+    }
+
     void insert(int x)
     {
         ensureCapacity();
+
         a[size] = x;
         size++;
+
         siftUp(size - 1);
     }
 
-    int peek()
+    int getMax()
     {
         if (size == 0)
         {
@@ -123,27 +120,24 @@ struct PQueue
         return a[0];
     }
 
-    int extract()
+    int extractMax()
     {
         if (size == 0)
         {
             return INT_MIN;
         }
 
-        int top = a[0];
+        int ans = a[0];
+
         a[0] = a[size - 1];
         size--;
+
         if (size > 0)
         {
             siftDown(0);
         }
 
-        return top;
-    }
-
-    bool empty()
-    {
-        return size == 0;
+        return ans;
     }
 };
 
@@ -151,13 +145,7 @@ struct PQueue
 
 int main()
 {
-    int mode;
-    cin >> mode;
-
-    int initialCap = 100;
-    bool isMax = (mode == 1);
-
-    PQueue pq(initialCap, isMax);
+    PriorityQueue pq(100);
 
     while (true)
     {
@@ -175,26 +163,24 @@ int main()
         }
         else if (op == 2)
         {
-            if (pq.empty())
+            if (pq.isEmpty())
             {
                 cout << "EMPTY\n";
             }
             else
             {
-                int val = pq.peek();
-                cout << val << "\n";
+                cout << pq.getMax() << "\n";
             }
         }
         else if (op == 3)
         {
-            if (pq.empty())
+            if (pq.isEmpty())
             {
                 cout << "EMPTY\n";
             }
             else
             {
-                int val = pq.extract();
-                cout << val << "\n";
+                cout << pq.extractMax() << "\n";
             }
         }
         else if (op == 0)
