@@ -1,85 +1,134 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-struct Node{
+struct Node
+{
     int val;
     Node* left;
     Node* right;
-    Node(int v): val(v), left(nullptr), right(nullptr){}
+
+    Node(int v)
+    {
+        val = v;
+        left = nullptr;
+        right = nullptr;
+    }
 };
 
-Node* build(const vector<int>& a){
-    if(a.empty() || a[0] == -1) return nullptr;
 
-    Node* r = new Node(a[0]);
+
+Node* build(int* a, int n)
+{
+    if (n == 0 || a[0] == -1)
+    {
+        return nullptr;
+    }
+
+    Node* root = new Node(a[0]);
+
     queue<Node*> q;
-    q.push(r);
+    q.push(root);
 
     int i = 1;
-    while(!q.empty() && i < (int)a.size()){
+
+    while (!q.empty() && i < n)
+    {
         Node* cur = q.front();
         q.pop();
 
-        if(i < (int)a.size() && a[i] != -1){
+        if (i < n && a[i] != -1)
+        {
             cur->left = new Node(a[i]);
             q.push(cur->left);
         }
         i++;
 
-        if(i < (int)a.size() && a[i] != -1){
+        if (i < n && a[i] != -1)
+        {
             cur->right = new Node(a[i]);
             q.push(cur->right);
         }
         i++;
     }
-    return r;
+
+    return root;
 }
 
-vector<int> rightView(Node* root){
-    vector<int> res;
-    if(!root) return res;
+
+
+void rightView(Node* root)
+{
+    if (root == nullptr)
+    {
+        cout << "\n";
+        return;
+    }
 
     queue<Node*> q;
     q.push(root);
 
-    while(!q.empty()){
+    bool first = true;
+
+    while (!q.empty())
+    {
         int sz = q.size();
-        for(int i = 0; i < sz; i++){
-            Node* n = q.front();
+
+        for (int i = 0; i < sz; i++)
+        {
+            Node* cur = q.front();
             q.pop();
 
-            if(i == sz - 1) res.push_back(n->val);
+            if (i == sz - 1)
+            {
+                if (!first)
+                {
+                    cout << " ";
+                }
 
-            if(n->left) q.push(n->left);
-            if(n->right) q.push(n->right);
+                cout << cur->val;
+                first = false;
+            }
+
+            if (cur->left != nullptr)
+            {
+                q.push(cur->left);
+            }
+
+            if (cur->right != nullptr)
+            {
+                q.push(cur->right);
+            }
         }
     }
-    return res;
+
+    cout << "\n";
 }
 
-int main(){
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
 
+
+int main()
+{
     int T;
     cin >> T;
 
-    while(T--){
+    while (T--)
+    {
         int n;
         cin >> n;
 
-        vector<int> a(n);
-        for(int i = 0; i < n; i++) cin >> a[i];
+        int* a = new int[n];
 
-        Node* root = build(a);
-
-        vector<int> ans = rightView(root);
-
-        for(int i = 0; i < ans.size(); i++){
-            if(i) cout << " ";
-            cout << ans[i];
+        for (int i = 0; i < n; i++)
+        {
+            cin >> a[i];
         }
-        cout << "\n";
+
+        Node* root = build(a, n);
+
+        rightView(root);
+
+        delete[] a;
     }
+
     return 0;
 }
