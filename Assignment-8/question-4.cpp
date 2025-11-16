@@ -1,133 +1,123 @@
-#include <bits/stdc++.h>
+#include <iostream>
 using namespace std;
 
-struct Node
+class Node
 {
-    int val;
+public:
+    int data;
     Node* left;
     Node* right;
 
-    Node(int v)
+    Node(int value)
     {
-        val = v;
+        data = value;
         left = nullptr;
         right = nullptr;
     }
 };
 
-
-
-Node* build(int* a, int n)
+class BinaryTree
 {
-    if (n == 0 || a[0] == -1)
+private:
+    Node* root;
+
+    Node* createNode()
     {
-        return nullptr;
-    }
+        int value;
+        cout << "Enter node value (-1 for no node): ";
+        cin >> value;
 
-    Node* root = new Node(a[0]);
-
-    queue<Node*> q;
-    q.push(root);
-
-    int i = 1;
-
-    while (!q.empty() && i < n)
-    {
-        Node* cur = q.front();
-        q.pop();
-
-        if (i < n && a[i] != -1)
+        if (value == -1)
         {
-            cur->left = new Node(a[i]);
-            q.push(cur->left);
+            return nullptr;
         }
-        i++;
 
-        if (i < n && a[i] != -1)
-        {
-            cur->right = new Node(a[i]);
-            q.push(cur->right);
-        }
-        i++;
+        Node* newNode = new Node(value);
+
+        cout << "Enter left child of " << value << ":\n";
+        newNode->left = createNode();
+
+        cout << "Enter right child of " << value << ":\n";
+        newNode->right = createNode();
+
+        return newNode;
     }
 
-    return root;
-}
-
-
-
-void rightView(Node* root)
-{
-    if (root == nullptr)
+    bool isBSTcheck(Node* node, Node* minNode, Node* maxNode)
     {
-        cout << "\n";
-        return;
-    }
-
-    queue<Node*> q;
-    q.push(root);
-
-    bool first = true;
-
-    while (!q.empty())
-    {
-        int sz = q.size();
-
-        for (int i = 0; i < sz; i++)
+        if (node == nullptr)
         {
-            Node* cur = q.front();
-            q.pop();
-
-            if (i == sz - 1)
-            {
-                if (!first)
-                {
-                    cout << " ";
-                }
-
-                cout << cur->val;
-                first = false;
-            }
-
-            if (cur->left != nullptr)
-            {
-                q.push(cur->left);
-            }
-
-            if (cur->right != nullptr)
-            {
-                q.push(cur->right);
-            }
+            return true;
         }
+
+        if (minNode != nullptr && node->data <= minNode->data)
+        {
+            return false;
+        }
+
+        if (maxNode != nullptr && node->data >= maxNode->data)
+        {
+            return false;
+        }
+
+        bool leftOK = isBSTcheck(node->left, minNode, node);
+        bool rightOK = isBSTcheck(node->right, node, maxNode);
+
+        return leftOK && rightOK;
     }
 
-    cout << "\n";
-}
+public:
+    BinaryTree()
+    {
+        root = nullptr;
+    }
 
+    void createTree()
+    {
+        cout << "Enter root node:\n";
+        root = createNode();
+    }
 
+    void inorder(Node* node)
+    {
+        if (node == nullptr)
+        {
+            return;
+        }
+
+        inorder(node->left);
+        cout << node->data << " ";
+        inorder(node->right);
+    }
+
+    bool isBST()
+    {
+        return isBSTcheck(root, nullptr, nullptr);
+    }
+
+    Node* getRoot()
+    {
+        return root;
+    }
+};
 
 int main()
 {
-    int T;
-    cin >> T;
+    BinaryTree tree;
 
-    while (T--)
+    tree.createTree();
+
+    cout << "\nIn-order traversal:\n";
+    tree.inorder(tree.getRoot());
+    cout << "\n";
+
+    if (tree.isBST())
     {
-        int n;
-        cin >> n;
-
-        int* a = new int[n];
-
-        for (int i = 0; i < n; i++)
-        {
-            cin >> a[i];
-        }
-
-        Node* root = build(a, n);
-
-        rightView(root);
-
-        delete[] a;
+        cout << "The given binary tree IS a BST\n";
+    }
+    else
+    {
+        cout << "The given binary tree is NOT a BST\n";
     }
 
     return 0;
